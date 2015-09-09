@@ -102,11 +102,17 @@
             var cookiesArray = documentCookie ? documentCookie.split('; ') : [];
 
             for (var i = 0; i < cookiesArray.length; i++) {
-                var cookieKvp = Cookies._getKeyValuePairFromCookieString(cookiesArray[i]);
+                try {
+                    var cookieKvp = Cookies._getKeyValuePairFromCookieString(cookiesArray[i]);
 
-                if (cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] === undefined) {
-                    cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] = cookieKvp.value;
-                }
+                    if (cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] === undefined) {
+                        cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] = cookieKvp.value;
+                    }
+                  } catch (e) {
+                      if (e instanceof URIError) {
+                        // Ignore "URI malformed" exceptions, cf. https://github.com/ScottHamper/Cookies/issues/22
+                      }
+                  }
             }
 
             return cookieCache;
